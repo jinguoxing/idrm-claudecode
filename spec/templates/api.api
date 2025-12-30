@@ -1,0 +1,30 @@
+syntax = "v1"
+
+info(
+    title: "{{feature_name}} API"
+    desc: "{{description}}"
+    version: "v1"
+)
+
+type (
+    // === Request Types ===
+    // CreateXxxReq 创建请求
+    // CreateXxxReq {
+    //     Name string `json:"name"`
+    // }
+
+    // === Response Types ===
+    // CreateXxxResp 创建响应
+    // CreateXxxResp {
+    //     Id int64 `json:"id"`
+    // }
+)
+
+@server(
+    prefix: /api/v1
+    group: {{feature_group}}
+)
+service idrm-api {
+    // @handler CreateXxx
+    // post /xxx (CreateXxxReq) returns (CreateXxxResp)
+}

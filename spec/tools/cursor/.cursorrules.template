@@ -1,0 +1,53 @@
+# IDRM Project Rules for Cursor
+
+## Project Context
+- **Name**: IDRM (Intelligent Data Resource Management)
+- **Tech Stack**: Go 1.21+, Go-Zero v1.9+, MySQL 8.0, Redis, Kafka
+- **Specs Location**: `private_doc/spec/`
+
+## Core Principles
+
+参考：`private_doc/spec/core/project-charter.md`
+
+1. **5-Phase Workflow**: Context → Specify → Design → Tasks → Implement
+2. **Layered Architecture**: Handler → Logic → Model (strict separation)
+3. **Dual ORM**: GORM + SQLx
+4. **Spec-Driven**: All development follows specifications
+
+## Architecture Rules
+
+参考：`private_doc/spec/architecture/layered-architecture.md`
+
+- **Handler**: Parse requests, call Logic, return responses (NO business logic)
+- **Logic**: Business rules, call Model, transform data (NO HTTP, NO DB)
+- **Model**: Data access, CRUD, transactions (NO business logic)
+
+## Coding Standards
+
+参考：`private_doc/spec/coding-standards/`
+
+- Chinese comments for all public items
+- Functions MUST be < 50 lines
+- Error wrapping with %w
+- Import groups: stdlib → third-party → internal
+
+## Quality Gates
+
+参考：`private_doc/spec/quality/quality-gates.md`
+
+- ✅ Build: `go build ./...`
+- ✅ Test: `go test -cover ./...` (>80%)
+- ✅ Lint: `golangci-lint run`
+
+## Before Generating Code
+
+1. Read relevant specs from `private_doc/spec/`
+2. Follow 5-phase workflow
+3. Ensure layered architecture compliance
+4. Add complete Chinese comments
+
+## References
+
+Core docs: `private_doc/spec/core/`
+Workflow: `private_doc/spec/workflow/`
+Quality: `private_doc/spec/quality/`

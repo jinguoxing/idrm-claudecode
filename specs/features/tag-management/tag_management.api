@@ -1,0 +1,147 @@
+syntax = "v1"
+
+info (
+	title:   "Tag Management API"
+	desc:    "数据标签管理API"
+	version: "v1"
+)
+
+type (
+	// === Request Types ===
+	// CreateTagReq 创建标签请求
+	CreateTagReq {
+		Name        string `json:"name" validate:"required,min=2,max=50"`
+		Description string `json:"description" validate:"max=200"`
+		Color       string `json:"color" validate:"omitempty,hexcolor,len=7"`
+	}
+	// UpdateTagReq 更新标签请求
+	UpdateTagReq {
+		Id          int64  `json:"id" validate:"required"`
+		Name        string `json:"name" validate:"required,min=2,max=50"`
+		Description string `json:"description" validate:"max=200"`
+		Color       string `json:"color" validate:"omitempty,hexcolor,len=7"`
+		Status      int    `json:"status" validate:"oneof=0 1"`
+	}
+	// DeleteTagReq 删除标签请求
+	DeleteTagReq {
+		Id int64 `path:"id" validate:"required"`
+	}
+	// ListTagsReq 标签列表请求
+	ListTagsReq {
+		Page     int    `form:"page,default=1" validate:"min=1"`
+		PageSize int    `form:"pageSize,default=20" validate:"min=1,max=100"`
+		Keyword  string `form:"keyword"`
+		Status   *int   `form:"status"`
+	}
+	// AssignTagsReq 为数据打标签请求
+	AssignTagsReq {
+		ResourceId   int64   `json:"resourceId" validate:"required"`
+		ResourceType string  `json:"resourceType" validate:"required"`
+		TagIds       []int64 `json:"tagIds" validate:"required,min=1"`
+	}
+	// UnassignTagsReq 移除标签请求
+	UnassignTagsReq {
+		ResourceId   int64   `json:"resourceId" validate:"required"`
+		ResourceType string  `json:"resourceType" validate:"required"`
+		TagIds       []int64 `json:"tagIds" validate:"required,min=1"`
+	}
+	// SearchByTagsReq 按标签搜索请求
+	SearchByTagsReq {
+		TagIds       []int64 `form:"tagIds" validate:"required,min=1"`
+		ResourceType string  `form:"resourceType" validate:"required"`
+		Page         int     `form:"page,default=1" validate:"min=1"`
+		PageSize     int     `form:"pageSize,default=20" validate:"min=1,max=100"`
+	}
+	// === Response Types ===
+	// CreateTagResp 创建标签响应
+	CreateTagResp {
+		Id int64 `json:"id"`
+	}
+	// TagInfo 标签信息
+	TagInfo {
+		Id          int64  `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Color       string `json:"color"`
+		Status      int    `json:"status"`
+		UsageCount  int64  `json:"usageCount"`
+		CreatedAt   string `json:"createdAt"`
+	}
+	// GetTagResp 标签详情响应
+	GetTagResp {
+		TagInfo
+	}
+	// ListTagsResp 标签列表响应
+	ListTagsResp {
+		Total int64     `json:"total"`
+		List  []TagInfo `json:"list"`
+	}
+	// UpdateTagResp 更新标签响应
+	UpdateTagResp {
+		Success bool `json:"success"`
+	}
+	// DeleteTagResp 删除标签响应
+	DeleteTagResp {
+		Success bool `json:"success"`
+	}
+	// AssignTagsResp 打标签响应
+	AssignTagsResp {
+		Success       bool `json:"success"`
+		AssignedCount int  `json:"assignedCount"`
+	}
+	// UnassignTagsResp 移除标签响应
+	UnassignTagsResp {
+		Success bool `json:"success"`
+	}
+	// ResourceInfo 资源信息
+	ResourceInfo {
+		Id   int64  `json:"id"`
+		Name string `json:"name"`
+		Type string `json:"type"`
+	}
+	// SearchByTagsResp 按标签搜索响应
+	SearchByTagsResp {
+		Total     int64          `json:"total"`
+		Resources []ResourceInfo `json:"resources"`
+	}
+)
+
+@server (
+	prefix:     /api/v1
+	group:      tag_management
+	middleware: Auth
+)
+service idrm-api {
+	@doc "创建标签"
+	@handler CreateTag
+	post /tags (CreateTagReq) returns (CreateTagResp)
+
+	@doc "获取标签详情"
+	@handler GetTag
+	get /tags/:id (GetTagResp)
+
+	@doc "标签列表"
+	@handler ListTags
+	get /tags (ListTagsResp)
+
+	@doc "更新标签"
+	@handler UpdateTag
+	put /tags (UpdateTagResp)
+
+	@doc "删除标签"
+	@handler DeleteTag
+	delete /tags/:id (DeleteTagResp)
+
+	@doc "为数据打标签"
+	@handler AssignTags
+	post /resources/tags/assign (AssignTagsReq) returns (AssignTagsResp)
+
+	@doc "移除数据标签"
+	@handler UnassignTags
+	post /resources/tags/unassign (UnassignTagsReq) returns (UnassignTagsResp)
+
+	@doc "按标签搜索数据"
+	@handler SearchByTags
+	get /resources/search (SearchByTagsResp)
+}
+

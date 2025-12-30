@@ -1,0 +1,28 @@
+# IDRM Project Rules for Claude Code CLI
+
+## Project Context
+IDRM - Intelligent Data Resource Management
+Tech: Go 1.21+, Go-Zero v1.9+, MySQL, Redis, Kafka
+Specs: `private_doc/spec/`
+
+## Workflow
+5-Phase: Context → Specify → Design → Tasks → Implement
+See: `private_doc/spec/core/workflow.md`
+
+## Architecture
+Layered: Handler → Logic → Model
+See: `private_doc/spec/architecture/layered-architecture.md`
+
+## Standards
+- Dual ORM (GORM + SQLx)
+- Chinese comments
+- Functions < 50 lines
+- Error wrapping with %w
+
+## Quality
+- Build pass
+- Test >80%
+- Lint clean
+
+## Usage
+Always reference specs in `private_doc/spec/`
